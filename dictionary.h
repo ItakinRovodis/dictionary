@@ -1,6 +1,10 @@
+#ifndef DICTIONARY_H
+#define DICTIONARY_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 #define CAPACITY 512 // Size of hash table
 
@@ -132,14 +136,4 @@ void print_table(HashTable* table) {
 	printf("--------------------\n");
 }
 
-int main() {
-	HashTable* ht = create_table(CAPACITY);
-	ht_insert(ht, "e", "First adress");
-	ht_insert(ht, "f", "Second_adress");
-	print_search(ht, "e");
-    print_search(ht, "f");
-    print_search(ht, "3");
-    print_table(ht);
-    free_table(ht);
-    return 0;
-}
+#endif
