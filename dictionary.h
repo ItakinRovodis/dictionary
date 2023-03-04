@@ -20,7 +20,7 @@ typedef struct Ht_item Ht_item;
 // Define the Hash Table Item here
 struct Ht_item {
     char* key;
-    char* value;
+    int value;
 };
 
 typedef struct HashTable HashTable;
@@ -34,13 +34,13 @@ struct HashTable {
     int count;
 };
 
-Ht_item* create_item(char* key, char* value) {
+Ht_item* create_item(char* key, int value) {
 	Ht_item*  item = (Ht_item*) malloc (sizeof(Ht_item));
 	item->key = (char*) malloc (strlen(key) + 1);
-	item->value = (char*) malloc (strlen(value) + 1);
+	item->value = 0; 
 
 	strcpy(item->key, key);
-	strcpy(item->value, value);
+	item->value = value;
 
 	return item;
 }
@@ -58,7 +58,6 @@ HashTable* create_table(int size) {
 
 void free_item(Ht_item* item) {
 	free(item->key);
-	free(item->value);
 	free(item);
 }
 
@@ -75,7 +74,7 @@ void free_table(HashTable* table) {
 void handle_collision(HashTable* table, unsigned long index, Ht_item* item) {
 }
 
-void ht_insert(HashTable* table, char* key, char* value) {
+void ht_insert(HashTable* table, char* key, int value) {
 	Ht_item* item = create_item(key, value);
 
 	unsigned long index = hash_function(key);
@@ -93,7 +92,7 @@ void ht_insert(HashTable* table, char* key, char* value) {
 		table->count++;
 	} else {
 		if (strcmp(current_item->key, key) == 0) {
-			strcpy(current_item->value, value);
+			current_item->value = value;
 			return;
 		} else { // Коллизия
 			 handle_collision(table, index, item);
@@ -104,7 +103,7 @@ void ht_insert(HashTable* table, char* key, char* value) {
 
 }
 
-char* ht_search(HashTable* table, char* key) {
+int ht_search(HashTable* table, char* key) {
 	int index = hash_function(key);
 	Ht_item* item = table->items[index];
 
@@ -113,16 +112,16 @@ char* ht_search(HashTable* table, char* key) {
 			return item->value;
 		}
 	}
-	return NULL;
+	return -1;
 }
 
 void print_search(HashTable* table, char* key) {
-	char* val;
-	if ((val = ht_search(table, key)) == NULL) {
+	int val;
+	if ((val = ht_search(table, key)) == -1) {
 		printf("Key: %s doesn't exist\n", key);
 		return;
 	} else {
-		printf("Key: %s, Value: %s\n", key, val);
+		printf("Key: %s, Value: %d\n", key, val);
 	}
 }
 
@@ -130,7 +129,7 @@ void print_table(HashTable* table) {
 	printf("\nHash Table\n--------------------\n");
 	for (int i = 0; i < table->size; ++i) {
 		if (table->items[i]) {
-			printf("Index:%d, Key:%s, Value:%s\n", i, table->items[i]->key, table->items[i]->value);
+			printf("Index:%d, Key:%s, Value:%d\n", i, table->items[i]->key, table->items[i]->value);
 		}
 	}
 	printf("--------------------\n");
